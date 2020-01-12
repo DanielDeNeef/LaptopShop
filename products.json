@@ -1,0 +1,16 @@
+{
+"items": [
+  {
+    "id":1,
+    "title": "HP Omen 17",
+    "price": 1600,
+    "image": "./images/omen-17.jpg"
+  },
+  {
+    "id":2,
+    "title":"Acer Predator Helios 300",
+    "price":1200,
+    "image":"./images/predator helios 300.jpg"
+  }
+]
+}
