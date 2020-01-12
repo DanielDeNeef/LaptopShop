@@ -10,37 +10,39 @@ const cartContent = document.querySelector('.cart-content');
 const productsDOM = document.querySelector('.products-center');
 //Cart
 let cart = [];
+//buttons
+let buttonsDOM = [];
 
 // getting the produts
 class Products {
-  async getProducts(){
-    try{
+  async getProducts() {
+    try {
       let result = await fetch('products.json');
       let data = await result.json();
 
       let products = data.items;
 
-      products = products.map(item =>{
+      products = products.map(item => {
         const id = item.id;
         const title = item.title;
         const price = item.price;
         const image = item.image;
-        return {title,price,id,image};
+        return { title, price, id, image };
       })
       return products;
-      
-    }catch(error){
-      console.log("some error found",error);
-    }    
+
+    } catch (error) {
+      console.log("some error found", error);
+    }
   }
 }
 
 // display products
 class UI {
-  displayProducts(products){
-    let result='';
+  displayProducts(products) {
+    let result = '';
     products.forEach(product => {
-      result +=`
+      result += `
       <!-- single products -->
       <article class="product">
         <div class="img-container">
@@ -59,46 +61,54 @@ class UI {
     productsDOM.innerHTML = result;
   }
 
-  getBagButtons(){
+  getBagButtons() {
     const buttons = [...document.querySelectorAll(".bag-btn")];
-    buttons.forEach(button =>{
+    buttonsDOM = buttons;
+    buttons.forEach(button => {
       let id = button.dataset.id;
-      let inCart = cart.find(item => item.id === id);
-      if(inCart){
+      let inCart = cart.find(item => item.id == id);
+      if (inCart) {
         button.innerText = "In Cart";
         button.disabled = true;
-      }else{
-        button.addEventListener('click',(event)=>{
-          event.target.innerText="In Cart";
-          event.target.disabled=true;
-          //get product from products 
-          //add product to the cart
-          //save cart in local storage
-          //set cart values
-          //display cart item
-          //show the cart
-        })
       }
+
+      button.addEventListener('click', (event) => {
+        event.target.innerText = "In Cart";
+        event.target.disabled = true;
+        //get product from products 
+        let cartItem ={...Storage.getProduct(id),amount:1};
+        //add product to the cart
+        //save cart in local storage
+        //set cart values
+        //display cart item
+        //show the cart
+      })
     });
   }
 }
 
 //local storage
-class Storage{
-  static saveProducts(products){
-    localStorage.setItem("products",JSON.stringify(products));
+class Storage {
+  static saveProducts(products) {
+    localStorage.setItem("products", JSON.stringify(products));
+  }
+
+  static getProduct(id){
+    let products = JSON.parse(localStorage.getItem('products'));
+    return products.find(item => item.id == id);
   }
 }
 
 //eventlistener
-document.addEventListener("DOMContentLoaded",()=> {
+document.addEventListener("DOMContentLoaded", () => {
   const products = new Products();
   const ui = new UI();
 
   //get all products
-  products.getProducts().then(products => {ui.displayProducts(products);
-  Storage.saveProducts(products);
-  }).then(()=>{
+  products.getProducts().then(products => {
+    ui.displayProducts(products);
+    Storage.saveProducts(products);
+  }).then(() => {
     ui.getBagButtons();
   });
 });
